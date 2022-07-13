@@ -65,6 +65,9 @@ END CATCH
 
 exec spLoginUser 'tomesh@gmail.com' ,'Tomesh@123'
 
+exec spGetAllUser
+
+
 --select * from userSignup
 --truncate table userSignup
 select * from Users
@@ -88,5 +91,101 @@ SELECT
 	ERROR_MESSAGE() AS ErrorMessage;
 END CATCH
 
-exec spForgetPasswordUser ''
+exec spForgetPasswordUser 'tomesh@gmail.com'
 
+drop procedure spForgetPasswordUser
+
+
+
+
+Create procedure spResetPassword(
+@Email varchar(50),
+@Password varchar(255)
+)
+As
+Begin try
+update Users set Password=@Password where Email=@Email 
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spResetPassword 'tomesh@gmail.com','Tomesh@125'
+select * from Users
+
+
+
+
+----Notes
+-----Add Node------
+create table Note(
+NoteId int identity(1,1) primary key,
+Title varchar(20) not null,
+Description varchar(max) not null,
+Bgcolor varchar(50) not null,
+IsPin bit,
+IsArchive bit,
+IsRemainder bit,
+IsTrash bit,
+UserId int not null foreign key references Users(UserId),
+RegisteredDate datetime default GETDATE(),
+Remainder datetime,
+ModifiedDate datetime null
+)
+
+---Add Note Store Procedure-----
+
+Alter procedure spAddNote(
+@Title varchar(20), 
+@Description varchar(max),
+@BgColor varchar(50),
+@UserId int
+)
+As
+Begin try
+insert into Note(Title,Description,Bgcolor,UserId,IsPin,IsArchive,IsRemainder,IsTrash,ModifiedDate) values(@Title,@Description,@BgColor,@UserId,0,0,0,0,GetDate())
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+truncate table Note
+
+exec spAddNote 'aaaa','bbbc','cccc',2;
+
+
+select * from Note
+
+select * from Users
+
+
+
+
+--- Get Note----
+
+create procedure spGetNote
+As
+Begin try
+Select * from Note where UserId = @UserId
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+
+ exec spGetNote 

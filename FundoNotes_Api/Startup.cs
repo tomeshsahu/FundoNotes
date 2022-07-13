@@ -81,6 +81,8 @@ namespace FundoNotes_ADO
                     );
             services.AddTransient<IUserRL, UserRL>();
             services.AddTransient<IUserBL, UserBL>();
+            services.AddTransient<INoteRL, NoteRL>();
+            services.AddTransient<INoteBL, NoteBL>();
 
         }
 

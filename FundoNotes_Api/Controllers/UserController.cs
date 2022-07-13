@@ -1,8 +1,11 @@
 ﻿using BusinessLayer.Interface;
 using DatabaseLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 
 namespace FundoNotes_ADO.Controllers
 {
@@ -23,7 +26,6 @@ namespace FundoNotes_ADO.Controllers
             {
                 this.userBL.AddUser(user);
                 return this.Ok(new { success = true, Message = "User Registration Sucessfull" });
-
             }
             catch (Exception ex)
             {
@@ -46,7 +48,6 @@ namespace FundoNotes_ADO.Controllers
             }
         }
 
-
         [HttpPost("Login")]
         public IActionResult LoginUser(LoginUserModel user)
         {
@@ -54,7 +55,6 @@ namespace FundoNotes_ADO.Controllers
             {
                 string result = this.userBL.LoginUser(user);
                 return Ok(new { success = true, Message = "Token Generated successfully", data = result });
-
             }
             catch (Exception ex)
             {
@@ -69,7 +69,24 @@ namespace FundoNotes_ADO.Controllers
             {
                 bool result = this.userBL.ForgetPasswordUser(email);
                 return Ok(new { success = true, Message = "Reset Password Link Send successfully", data = result });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
+        [Authorize]
+        [HttpPut("ResetPassword")]
+        public IActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            try
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                IEnumerable<Claim> claims = identity.Claims;
+                var email = claims.Where(p => p.Type == @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()?.Value;
+                bool result = this.userBL.ResetPassword(email, resetPasswordModel);
+                return Ok(new { success = true, Message = $"{email} your Password Updated successfully!" });
             }
             catch (Exception ex)
             {

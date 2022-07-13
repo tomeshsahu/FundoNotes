@@ -57,6 +57,16 @@ namespace BusinessLayer.Services
             }
         }
 
-
+        public bool ResetPassword(string email, ResetPasswordModel resetPasswordModel)
+        {
+            try
+            {
+                return this.userRL.ResetPassword(email, resetPasswordModel);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
