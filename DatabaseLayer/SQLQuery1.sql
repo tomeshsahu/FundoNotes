@@ -173,10 +173,10 @@ select * from Users
 
 --- Get Note----
 
-create procedure spGetNote
+alter procedure spGetNote(@UserId int)
 As
 Begin try
-Select * from Note where UserId = @UserId
+select * from Note where UserId = @UserId and IsTrash=0
 end try
 Begin catch
 SELECT 
@@ -188,4 +188,34 @@ SELECT
 END CATCH
 
 
- exec spGetNote 
+ select * from Note
+ exec spGetNote
+
+
+
+
+
+ --------Update Notes----------
+
+alter procedure spUpdateNote(
+@Title varchar(20), 
+@Description varchar(max),
+@BgColor varchar(50),
+@UserId int,
+@NoteId int,
+@IsPin bit,
+@IsArchive bit,
+@IsTrash bit
+)
+As
+Begin try
+Update Note set Title=@Title, Description=@Description,BgColor=@BgColor,UserId=@UserId,IsPin=@IsPin,IsArchive=@IsArchive,IsTrash=@IsTrash,ModifiedDate=GetDate() where UserId=@UserId and NoteId=@NoteId
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH

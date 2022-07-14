@@ -38,5 +38,17 @@ namespace BusinessLayer.Services
                 throw ex;
             }
         }
+
+        public async Task UpdateNote(int UserId, int NoteId, UpdateNoteModel noteModel)
+        {
+            try
+            {
+                 await this.noteRL.UpdateNote(UserId, NoteId, noteModel);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

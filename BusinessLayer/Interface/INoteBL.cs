@@ -11,5 +11,6 @@ namespace BusinessLayer.Interface
         Task AddNote(int UserId, NoteModel noteModel);
 
         Task<List<NodeResponseModel>> GetNote(int UserId);
+        Task UpdateNote(int UserId, int NoteId, UpdateNoteModel noteModel);
     }
 }
